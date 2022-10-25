@@ -1,18 +1,12 @@
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
-const setWordToFind = async () => {
-    const text = await Deno.readTextFile('liste_francais.txt');
-    const words = text.split('\n');
-    const wordToFind = words[Math.floor(Math.random()*words.length)];
-    Deno.env.set('WORD_TO_FIND', wordToFind);
-}
-
-await setWordToFind();
-
 
 async function handler(_req: Request): Promise<Response> {
     try {
-        const wordToFind = Deno.env.get('WORD_TO_FIND');
+        //const text = await Deno.readTextFile('liste_francais.txt');
+        //const words = text.split('\n');
+        //const wordToFind = words[Math.floor(Math.random()*words.length)];
+        const wordToFind = "Chien";
         const guess = await extractGuess(_req);
         console.log(`Guess detecté ${guess}.`);
         console.log(`Mot a trouver ${wordToFind}.`);
@@ -49,7 +43,6 @@ const similarity = async (word1, word2) => {
 
 const responseBuilder = async (word: string, similarity: number) => {
     if (similarity == 1) {
-        await setWordToFind();
         return `Trouvé ! Le mot était ${word}. \n Le mot a changé, rejoue !`;
       } else if (similarity > 0.5) {
         return `Tu chauffes, ${word} est proche du mot à trouver, score : ${similarity}`;
