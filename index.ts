@@ -30,12 +30,12 @@ updateWordToFind();
           query,
         }),
       });
-      console.log(res.body);
       const { data, errors } = await res.json();
       if (errors) {
         // Return the first error if there are any.
         return { data, error: errors[0] };
       }
+      console.log(data);
   
       return { data };
     } catch (error) {
