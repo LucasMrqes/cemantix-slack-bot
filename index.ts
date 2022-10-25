@@ -7,6 +7,8 @@ const wordToFind = words[Math.floor(Math.random()*words.length)];
 async function handler(_req: Request): Promise<Response> {
     try {
         const guess = await extractGuess(_req);
+        console.log(`Guess detecté ${guess}.`);
+        console.log(`Mot a trouver ${wordToFind}.`);
         const simScore = await similarity(guess, wordToFind);
         return new Response(responseBuilder(guess, simScore));
     } catch (e) {
