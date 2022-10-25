@@ -30,7 +30,7 @@ updateWordToFind();
           query,
         }),
       });
-  
+      await console.log(await res);
       const { data, errors } = await res.json();
       if (errors) {
         // Return the first error if there are any.
