@@ -47,7 +47,7 @@ async function updateWordToFind() {
     const text = await Deno.readTextFile('liste_francais.txt');
     const words = text.split('\n');
     const updatedWord = words[Math.floor(Math.random()*words.length)];
-    const query = `mutation {updateWord(id: ${wordId}, data: {word: \"${updatedWord}\"}) {_id word}}`;
+    const query = `mutation {updateWord(id: 346498445402440265, data: {word: \"${updatedWord}\"}) {_id word}}`;
     const {data,error} = await queryFauna(query);
     if (error) {
         return error;
@@ -56,7 +56,7 @@ async function updateWordToFind() {
 }
 
 async function getWordToFind() {
-    const query = `query {findWordByID(id: ${wordId}) {word}}`;
+    const query = `query {findWordByID(id: 346498445402440265) {word}}`;
     const {data,error} = await queryFauna(query);
     if (error) {
         return error;
