@@ -1,15 +1,13 @@
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
-
-
-const setWordToFind = () => {
+const setWordToFind = async () => {
     const text = await Deno.readTextFile('liste_francais.txt');
     const words = text.split('\n');
     const wordToFind = words[Math.floor(Math.random()*words.length)];
     Deno.env.set('WORD_TO_FIND', wordToFind);
 }
 
-setWordToFind();
+await setWordToFind();
 
 
 async function handler(_req: Request): Promise<Response> {
@@ -19,7 +17,8 @@ async function handler(_req: Request): Promise<Response> {
         console.log(`Guess detecté ${guess}.`);
         console.log(`Mot a trouver ${wordToFind}.`);
         const simScore = await similarity(guess, wordToFind);
-        return new Response(responseBuilder(guess, simScore));
+        const formattedResponse = await responseBuilder(guess, simScore);
+        return new Response(formattedResponse);
     } catch (e) {
         console.error(e);
         return new Response("An error occured : ", e);
@@ -48,9 +47,9 @@ const similarity = async (word1, word2) => {
     return Number(similarityResponseJson.simscore);
 }
 
-const responseBuilder = (word: string, similarity: number) => {
+const responseBuilder = async (word: string, similarity: number) => {
     if (similarity == 1) {
-        setWordToFind();
+        await setWordToFind();
         return `Trouvé ! Le mot était ${word}. \n Le mot a changé, rejoue !`;
       } else if (similarity > 0.5) {
         return `Tu chauffes, ${word} est proche du mot à trouver, score : ${similarity}`;
