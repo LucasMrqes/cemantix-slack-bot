@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 async function handler(_req: Request): Promise<Response> {
     const wordToFind = 'chien';
     const guess = await extractGuess(_req);
-    return new Response("similarity(wordToFind, guess).toString()");
+    return new Response(similarity(wordToFind, guess).toString());
 }
 
 const similarity = async (word1, word2) => {
