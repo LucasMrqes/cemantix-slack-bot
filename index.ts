@@ -82,7 +82,7 @@ async function getWordToFind() {
 
 async function handler(_req: Request): Promise<Response> {
     try {
-        const wordToFind = getWordToFind();
+        const wordToFind = await getWordToFind();
         console.log(wordToFind);
         const guess = await extractGuess(_req);
         console.log(`Guess detecté ${guess}.`);
