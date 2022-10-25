@@ -6,42 +6,39 @@ import {
   
 
 const wordId = 346498445402440265;
-updateWordToFind();
-
-  async function queryFauna(
-    query: string,
-  ) {
+async function queryFauna(query: string) 
+{
     // Grab the secret from the environment.
     const token = Deno.env.get("FAUNA_SECRET");
     if (!token) {
-      throw new Error("environment variable FAUNA_SECRET not set");
+        throw new Error("environment variable FAUNA_SECRET not set");
+}
+
+try {
+    // Make a POST request to fauna's graphql endpoint with body being
+    // the query and its variables.
+    const res = await fetch("https://graphql.fauna.com/graphql", {
+    method: "POST",
+    headers: {
+        authorization: `Bearer ${token}`,
+        "content-type": "application/json",
+    },
+    body: JSON.stringify({
+        query,
+    }),
+    });
+    const { data, errors } = await res.json();
+    if (errors) {
+    // Return the first error if there are any.
+    return { data, error: errors[0] };
     }
-  
-    try {
-      // Make a POST request to fauna's graphql endpoint with body being
-      // the query and its variables.
-      const res = await fetch("https://graphql.fauna.com/graphql", {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${token}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          query,
-        }),
-      });
-      const { data, errors } = await res.json();
-      if (errors) {
-        // Return the first error if there are any.
-        return { data, error: errors[0] };
-      }
-      console.log(data);
-  
-      return { data };
-    } catch (error) {
-      return { error };
-    }
-  }
+    console.log(data);
+
+    return { data };
+} catch (error) {
+    return { error };
+}
+}
 
 async function updateWordToFind() {
     const text = await Deno.readTextFile('liste_francais.txt');
