@@ -1,9 +1,15 @@
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
 async function handler(_req: Request): Promise<Response> {
-    const wordToFind = 'chien';
-    const guess = await extractGuess(_req);
-    return new Response(similarity(wordToFind, guess).toString());
+    try {
+        const wordToFind = "chien";
+        const guess = await extractGuess(_req);
+        const simScore = await similarity(guess, wordToFind);
+        return new Response(responseBuilder(guess, simScore));
+    } catch (e) {
+        console.error(e);
+        return new Response("An error occured : ", e);
+      }
 }
 
 const similarity = async (word1, word2) => {
@@ -26,6 +32,16 @@ const similarity = async (word1, word2) => {
     );
     const similarityResponseJson = await similarityResponse.json();
     return Number(similarityResponseJson.simscore);
+}
+
+const responseBuilder = (word: string, similarity: number) => {
+    if (similarity == 1) {
+        return `Trouvé ! Le mot était ${word}.`;
+      } else if (similarity > 0.5) {
+        return `Tu chauffes, ${word} est proche du mot à trouver, score : ${similarity}`;
+      } else if (similarity < 0.5) {
+        return `T'es froid, ${word} est loin du mot à trouver, score : ${similarity}`;
+      }
 }
 
 
