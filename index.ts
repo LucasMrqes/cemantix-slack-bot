@@ -30,7 +30,7 @@ updateWordToFind();
           query,
         }),
       });
-      await console.log(await res.body);
+      console.log(res.body);
       const { data, errors } = await res.json();
       if (errors) {
         // Return the first error if there are any.
@@ -47,16 +47,7 @@ async function updateWordToFind() {
     const text = await Deno.readTextFile('liste_francais.txt');
     const words = text.split('\n');
     const updatedWord = words[Math.floor(Math.random()*words.length)];
-    const query = `
-    mutation {
-        updateWord(id: 346498445402440265, data: {
-            word: ${updatedWord}
-        }) {
-            _id
-            ${wordId}
-        }
-    }
-    `;
+    const query = `mutation {updateWord(id: ${wordId}, data: {word: \"${updatedWord}\"}) {_id word}}`;
     const {data,error} = await queryFauna(query);
     if (error) {
         return error;
@@ -65,13 +56,7 @@ async function updateWordToFind() {
 }
 
 async function getWordToFind() {
-    const query = `
-    query {
-        findWordByID(id: ${wordId}) {
-            word
-        }
-    }
-    `;
+    const query = `query {findWordByID(id: ${wordId}) {word}}`;
     const {data,error} = await queryFauna(query);
     if (error) {
         return error;
@@ -82,7 +67,8 @@ async function getWordToFind() {
 
 async function handler(_req: Request): Promise<Response> {
     try {
-        const wordToFind = await getWordToFind();
+        const query = await getWordToFind();
+        const wordToFind = query.findWordByID.word;
         console.log(wordToFind);
         const guess = await extractGuess(_req);
         console.log(`Guess detecté ${guess}.`);
